@@ -28,6 +28,14 @@ class _QRViewExampleState extends State<QRViewExample> {
     controller.resumeCamera();
   }
 
+  getResult(result){
+    if(result == null || result == result.code){
+      return;
+    } else {
+      return result.code;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,98 +49,93 @@ class _QRViewExampleState extends State<QRViewExample> {
           Container(height: 350, child: _buildQrView(context)),
           Expanded(
             child: Container(
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.all(8),
-                          child: RawMaterialButton(
-                            elevation: 2.0,
-                            fillColor: Color(0xFFF5CEB8),
-                            padding: EdgeInsets.all(10.0),
-                            shape: CircleBorder(),
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                              setState(() {});
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.all(8),
+                        child: RawMaterialButton(
+                          elevation: 2.0,
+                          fillColor: Color(0xFFF5CEB8),
+                          padding: EdgeInsets.all(10.0),
+                          shape: CircleBorder(),
+                          onPressed: () async {
+                            await controller?.toggleFlash();
+                            setState(() {});
+                          },
+                          child: FutureBuilder(
+                            future: controller?.getFlashStatus(),
+                            builder: (context, snapshot) {
+                              return Icon(Icons.flare_sharp);
                             },
-                            child: FutureBuilder(
-                              future: controller?.getFlashStatus(),
-                              builder: (context, snapshot) {
-                                return Icon(Icons.flare_sharp);
-                              },
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(8),
+                        child: RawMaterialButton(
+                          elevation: 2.0,
+                          fillColor: Color(0xFFF5CEB8),
+                          padding: EdgeInsets.all(10.0),
+                          shape: CircleBorder(),
+                          onPressed: () async {
+                            await controller?.pauseCamera();
+                          },
+                          child: Icon(Icons.pause),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(8),
+                        child: RawMaterialButton(
+                          elevation: 2.0,
+                          fillColor: Color(0xFFF5CEB8),
+                          padding: EdgeInsets.all(10.0),
+                          shape: CircleBorder(),
+                          onPressed: () async {
+                            await controller?.resumeCamera();
+                          },
+                          child: Icon(Icons.play_arrow),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Expanded(child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemCount: list.length,
+                    itemBuilder: (BuildContext, context){
+                      return Padding(
+                        padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                        child: Container(
+                          height: 50,
+                          width: 400,
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.all(8),
-                          child: RawMaterialButton(
-                            elevation: 2.0,
-                            fillColor: Color(0xFFF5CEB8),
-                            padding: EdgeInsets.all(10.0),
-                            shape: CircleBorder(),
-                            onPressed: () async {
-                              await controller?.pauseCamera();
-                            },
-                            child: Icon(Icons.pause),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.all(8),
-                          child: RawMaterialButton(
-                            elevation: 2.0,
-                            fillColor: Color(0xFFF5CEB8),
-                            padding: EdgeInsets.all(10.0),
-                            shape: CircleBorder(),
-                            onPressed: () async {
-                              await controller?.resumeCamera();
-                            },
-                            child: Icon(Icons.play_arrow),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (result != null)
-                      Expanded(child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: ScrollPhysics(),
-                        itemCount: list.length,
-                        itemBuilder: (BuildContext, context){
-                          return Padding(
-                            padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                            child: Container(
-                              height: 50,
-                              width: 400,
-                              child: Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}'),
-                                      Icon(Icons.cancel_outlined),
-                                    ],
-                                  ),
-                                ),
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Barcode Type: ${describeEnum(result.format)}   Data: ${getResult(result)}'),
+                                  Icon(Icons.cancel_outlined),
+                                ],
                               ),
                             ),
-                          );
-                        },
-                      ))
-                    else
-                      Text('Scan a code'),
-                  ],
-                ),
+                          ),
+                        ),
+                      );
+                    },
+                  )),
+
+                ],
               ),
             ),
           )

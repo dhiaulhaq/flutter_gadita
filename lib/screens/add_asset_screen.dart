@@ -16,7 +16,7 @@ class AddAssetScreen extends StatelessWidget{
 
   Future saveProduct() async{
     final response =
-      await http.post(Uri.parse("http://192.168.0.6:8000/api/products"),
+      await http.post(Uri.parse("http://192.168.0.8:8000/api/products"),
         body: {
           "name" : _nameController.text,
           "description" : _descriptionController.text,
@@ -32,6 +32,7 @@ class AddAssetScreen extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFFF5CEB8),
         title: Text('Add Asset'),
         iconTheme: IconThemeData(
           color: Colors.black,
@@ -99,7 +100,7 @@ class AddAssetScreen extends StatelessWidget{
                       print(count);
                       historyList
                           .add(History(data: _nameController.text, dateTime: DateTime.now()));
-                      Navigator.push(
+                      Navigator.pop(
                           context, MaterialPageRoute(
                         builder: (context)=>AssetsScreen(),
                       ));

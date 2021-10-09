@@ -1,28 +1,27 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gadita/screens/assets_screen.dart';
+import 'package:gadita/screens/supplier_screen.dart';
 import 'package:http/http.dart' as http;
 
-class EditAssetScreen extends StatelessWidget{
+class AddSupplierScreen extends StatelessWidget{
 
-  final Map asset;
-
-  EditAssetScreen({@required this.asset});
-
+  final Text text;
+  AddSupplierScreen({this.text});
+  int count = 0;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _priceController = TextEditingController();
-  TextEditingController _imageUrlController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
 
-  Future updateProduct() async{
+  Future saveProduct() async{
     final response =
-    await http.put(Uri.parse("http://192.168.0.8:8000/api/products/" + asset['id'].toString()),
+    await http.post(Uri.parse("http://192.168.0.8:8000/api/supplier"),
         body: {
           "name" : _nameController.text,
           "description" : _descriptionController.text,
-          "price" : _priceController.text,
-          "image_url" : _imageUrlController.text,
+          "address" : _addressController.text,
+          "phone" : _phoneController.text,
         }
     );
 
@@ -34,48 +33,58 @@ class EditAssetScreen extends StatelessWidget{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Edit Asset'),
+        title: Text('Add Supplier'),
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.push(
+              context, MaterialPageRoute(
+            builder: (context)=>SupplierScreen(),
+          )),
+        ),
       ),
       body: Form(
         key: _formKey,
         child: Column(
           children: [
             TextFormField(
-              controller: _nameController..text = asset['name'],
+              controller: _nameController,
               decoration: InputDecoration(labelText: "Name"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset name";
+                  return "Please enter supplier name";
                 }
                 return null;
               },
             ),
             TextFormField(
-              controller: _descriptionController..text = asset['description'],
+              controller: _descriptionController,
               decoration: InputDecoration(labelText: "Description"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset description";
+                  return "Please enter supplier description";
                 }
                 return null;
               },
             ),
             TextFormField(
-              controller: _priceController..text = asset['price'],
-              decoration: InputDecoration(labelText: "Price"),
+              controller: _addressController,
+              decoration: InputDecoration(labelText: "Address"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset price";
+                  return "Please enter supplier address";
                 }
                 return null;
               },
             ),
             TextFormField(
-              controller: _imageUrlController..text = asset['image_url'],
-              decoration: InputDecoration(labelText: "Image URL"),
+              controller: _phoneController,
+              decoration: InputDecoration(labelText: "Phone Number"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset image url";
+                  return "Please enter supplier phone number";
                 }
                 return null;
               },
@@ -86,18 +95,33 @@ class EditAssetScreen extends StatelessWidget{
             ElevatedButton(
               onPressed: (){
                 if(_formKey.currentState.validate()){
-                  updateProduct().then((value) {
-                    Navigator.pop(
+                  saveProduct().then((value) {
+                    count++;
+                    print(count);
+                    historyList
+                        .add(History(data: _nameController.text, dateTime: DateTime.now()));
+                    Navigator.push(
                         context, MaterialPageRoute(
-                      builder: (context)=>AssetsScreen()));
+                      builder: (context)=>SupplierScreen(),
+                    ));
                   });
                 }
               },
-              child: Text("Update"),
+              child: Text("Save"),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+int count = 0;
+List<History> historyList = [];
+
+class History{
+  String data;
+  DateTime dateTime;
+
+  History({this.data, this.dateTime});
 }

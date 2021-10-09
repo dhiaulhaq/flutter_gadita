@@ -1,21 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gadita/screens/assets_screen.dart';
 import 'package:gadita/screens/barcode_detail_screen.dart';
-import 'package:gadita/screens/edit_asset_screen.dart';
+import 'package:gadita/screens/supplier_screen.dart';
 import 'package:http/http.dart' as http;
 
-class AssetsDetailScreen extends StatefulWidget{
+class SupplierDetailScreen extends StatefulWidget{
 
   final Map asset;
-  AssetsDetailScreen({@required this.asset});
+  SupplierDetailScreen({@required this.asset});
 
   @override
-  _AssetsDetailScreenState createState() => _AssetsDetailScreenState();
+  _SupplierDetailScreenState createState() => _SupplierDetailScreenState();
 }
 
-class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
-  String url = 'http://192.168.0.8:8000/api/products';
+class _SupplierDetailScreenState extends State<SupplierDetailScreen> {
+  String url = 'http://192.168.0.8:8000/api/supplier';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -24,7 +23,7 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.8:8000/api/products/" + assetId;
+    String url = "http://192.168.0.8:8000/api/supplier/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -51,7 +50,7 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
                 });
                 Navigator.push(
                     context, MaterialPageRoute(
-                  builder: (context)=>AssetsScreen(),
+                  builder: (context)=>SupplierScreen(),
                 ));
               },
             ),
@@ -67,35 +66,15 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.black54,
         child: Icon(Icons.edit),
-        onPressed: (){
-          Navigator.push(
-              context, MaterialPageRoute(
-            builder: (context)=>EditAssetScreen(),
-          ));
-        },
+        onPressed: (){},
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Asset Detail'),
+        title: Text('Supplier Detail'),
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
         actions: <Widget>[
-          Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(
-                      builder: (context)=>BarcodeDetailScreen(assetBarcode: widget.asset['id']),
-                  ));
-                },
-                child: Icon(
-                  Icons.qr_code,
-                  size: 26.0,
-                ),
-              )
-          ),
           Padding(
               padding: EdgeInsets.only(right: 20.0),
               child: GestureDetector(
@@ -110,22 +89,6 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: 20,
-          ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15.0),
-              color: Colors.black,
-            ),
-            padding: EdgeInsets.all(5),
-            height: 250,
-            width: 250,
-            child: Image.network(
-              widget.asset['image_url'],
-              fit: BoxFit.fill,
-            ),
-          ),
           SizedBox(
             height: 20,
           ),
@@ -155,7 +118,7 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
                   style: TextStyle(fontSize: 15),
                 ),
                 Text(
-                  "Rp. " + widget.asset['price'],
+                  "Rp. " + widget.asset['address'],
                   style: TextStyle(fontSize: 18),
                 ),
               ],
@@ -179,7 +142,7 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 15.0, top: 10.0, right: 15.0),
             child: Text(
-              widget.asset['description'],
+              widget.asset['phone'],
               style: TextStyle(fontSize: 15),
             ),
           ),

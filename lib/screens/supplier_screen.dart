@@ -2,19 +2,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gadita/main.dart';
 import 'package:gadita/screens/add_asset_screen.dart';
+import 'package:gadita/screens/add_supplier.dart';
 import 'package:gadita/screens/assets_detail_screen.dart';
 import 'package:gadita/screens/edit_asset_screen.dart';
+import 'package:gadita/screens/edit_supplier_screen.dart';
 import 'package:gadita/screens/home.dart';
+import 'package:gadita/screens/supplier_detail_screen.dart';
 import 'package:http/http.dart' as http;
 
-class AssetsScreen extends StatefulWidget{
+class SupplierScreen extends StatefulWidget{
 
   @override
-  _AssetsScreenState createState() => _AssetsScreenState();
+  _SupplierScreenState createState() => _SupplierScreenState();
 }
 
-class _AssetsScreenState extends State<AssetsScreen> {
-  String url = 'http://192.168.0.8:8000/api/products';
+class _SupplierScreenState extends State<SupplierScreen> {
+  String url = 'http://192.168.0.8:8000/api/supplier';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -37,13 +40,13 @@ class _AssetsScreenState extends State<AssetsScreen> {
         onPressed: (){
           Navigator.push(
               context, MaterialPageRoute(
-              builder: (context)=>AddAssetScreen(),
+            builder: (context)=>AddSupplierScreen(),
           ));
         },
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Assets'),
+        title: Text('Supplier'),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -60,7 +63,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
         builder: (context, snapshot){
           if(snapshot.hasData){
             return ListView.builder(
-              itemCount: snapshot.data['data'].length,
+                itemCount: snapshot.data['data'].length,
                 itemBuilder: (context, index){
                   return Container(
                     height: 100,
@@ -69,7 +72,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
                       onTap: (){
                         Navigator.push(
                             context, MaterialPageRoute(
-                            builder: (context)=>AssetsDetailScreen(asset: snapshot.data['data'][index],)
+                            builder: (context)=>SupplierDetailScreen(asset: snapshot.data['data'][index],)
                         ));
                       },
                       child: Card(
@@ -79,18 +82,6 @@ class _AssetsScreenState extends State<AssetsScreen> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              padding: EdgeInsets.all(5),
-                              height: 100,
-                              width: 100,
-                              child: Image.network(
-                                snapshot.data['data'][index]['image_url'],
-                                fit: BoxFit.cover,
-                              ),
-                            ),
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.all(10.0),
@@ -110,7 +101,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
                                           onTap: (){
                                             Navigator.push(
                                                 context, MaterialPageRoute(
-                                                builder: (context)=>EditAssetScreen(asset: snapshot.data['data'][index],)
+                                                builder: (context)=>EditSupplierScreen(asset: snapshot.data['data'][index],)
                                             ));
                                           },
                                           child: Icon(Icons.edit),

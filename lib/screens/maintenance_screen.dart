@@ -1,20 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gadita/main.dart';
-import 'package:gadita/screens/add_asset_screen.dart';
-import 'package:gadita/screens/assets_detail_screen.dart';
-import 'package:gadita/screens/edit_asset_screen.dart';
+import 'package:gadita/screens/add_maintenance.dart';
+import 'package:gadita/screens/edit_maintenance_screen.dart';
 import 'package:gadita/screens/home.dart';
+import 'package:gadita/screens/maintenance_detail_screen.dart';
 import 'package:http/http.dart' as http;
 
-class AssetsScreen extends StatefulWidget{
+class MaintenanceScreen extends StatefulWidget{
 
   @override
-  _AssetsScreenState createState() => _AssetsScreenState();
+  _MaintenanceScreenState createState() => _MaintenanceScreenState();
 }
 
-class _AssetsScreenState extends State<AssetsScreen> {
-  String url = 'http://192.168.0.8:8000/api/products';
+class _MaintenanceScreenState extends State<MaintenanceScreen> {
+  String url = 'http://192.168.0.8:8000/api/maintenance';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -23,7 +23,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.8:8000/api/products/" + assetId;
+    String url = "http://192.168.0.8:8000/api/maintenance/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -37,13 +37,13 @@ class _AssetsScreenState extends State<AssetsScreen> {
         onPressed: (){
           Navigator.push(
               context, MaterialPageRoute(
-              builder: (context)=>AddAssetScreen(),
+            builder: (context)=>AddMaintenanceScreen(),
           ));
         },
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Assets'),
+        title: Text('Maintenance'),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -60,7 +60,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
         builder: (context, snapshot){
           if(snapshot.hasData){
             return ListView.builder(
-              itemCount: snapshot.data['data'].length,
+                itemCount: snapshot.data['data'].length,
                 itemBuilder: (context, index){
                   return Container(
                     height: 100,
@@ -69,7 +69,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
                       onTap: (){
                         Navigator.push(
                             context, MaterialPageRoute(
-                            builder: (context)=>AssetsDetailScreen(asset: snapshot.data['data'][index],)
+                            builder: (context)=>MaintenanceDetailScreen(asset: snapshot.data['data'][index],)
                         ));
                       },
                       child: Card(
@@ -79,44 +79,37 @@ class _AssetsScreenState extends State<AssetsScreen> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              padding: EdgeInsets.all(5),
-                              height: 100,
-                              width: 100,
-                              child: Image.network(
-                                snapshot.data['data'][index]['image_url'],
-                                fit: BoxFit.cover,
-                              ),
-                            ),
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                child: Column(
                                   children: [
-                                    Text(
-                                      snapshot.data['data'][index]['name'],
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                                     Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                       children: [
-                                        GestureDetector(
-                                          onTap: (){
-                                            Navigator.push(
-                                                context, MaterialPageRoute(
-                                                builder: (context)=>EditAssetScreen(asset: snapshot.data['data'][index],)
-                                            ));
-                                          },
-                                          child: Icon(Icons.edit),
+                                        Text(
+                                          snapshot.data['data'][index]['name'],
+                                          style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: (){
+                                                Navigator.push(
+                                                    context, MaterialPageRoute(
+                                                    builder: (context)=>EditMaintenanceScreen(asset: snapshot.data['data'][index],)
+                                                ));
+                                              },
+                                              child: Icon(Icons.edit),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
+                                    Text(snapshot.data['data'][index]['description']),
                                   ],
                                 ),
                               ),

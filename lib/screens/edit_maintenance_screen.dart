@@ -1,28 +1,32 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gadita/screens/assets_screen.dart';
+import 'package:gadita/screens/maintenance_screen.dart';
 import 'package:http/http.dart' as http;
 
-class EditAssetScreen extends StatelessWidget{
+class EditMaintenanceScreen extends StatelessWidget{
 
   final Map asset;
 
-  EditAssetScreen({@required this.asset});
+  EditMaintenanceScreen({@required this.asset});
 
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _priceController = TextEditingController();
-  TextEditingController _imageUrlController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
 
   Future updateProduct() async{
     final response =
-    await http.put(Uri.parse("http://192.168.0.8:8000/api/products/" + asset['id'].toString()),
+    await http.put(Uri.parse("http://192.168.0.8:8000/api/maintenance/" + asset['id'].toString()),
         body: {
           "name" : _nameController.text,
           "description" : _descriptionController.text,
-          "price" : _priceController.text,
-          "image_url" : _imageUrlController.text,
+          "location" : _locationController.text,
+          "address" : _addressController.text,
+          "date" : _dateController.text,
+          "phone" : _phoneController.text,
         }
     );
 
@@ -34,7 +38,7 @@ class EditAssetScreen extends StatelessWidget{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Edit Asset'),
+        title: Text('Edit Maintenance'),
       ),
       body: Form(
         key: _formKey,
@@ -45,7 +49,7 @@ class EditAssetScreen extends StatelessWidget{
               decoration: InputDecoration(labelText: "Name"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset name";
+                  return "Please enter name";
                 }
                 return null;
               },
@@ -55,27 +59,47 @@ class EditAssetScreen extends StatelessWidget{
               decoration: InputDecoration(labelText: "Description"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset description";
+                  return "Please enter description";
                 }
                 return null;
               },
             ),
             TextFormField(
-              controller: _priceController..text = asset['price'],
+              controller: _locationController..text = asset['location'],
               decoration: InputDecoration(labelText: "Price"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset price";
+                  return "Please enter location";
                 }
                 return null;
               },
             ),
             TextFormField(
-              controller: _imageUrlController..text = asset['image_url'],
-              decoration: InputDecoration(labelText: "Image URL"),
+              controller: _addressController..text = asset['address'],
+              decoration: InputDecoration(labelText: "Address"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter asset image url";
+                  return "Please enter address";
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _dateController..text = asset['date'],
+              decoration: InputDecoration(labelText: "Dare"),
+              validator: (value){
+                if(value == null || value.isEmpty){
+                  return "Please date";
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _phoneController..text = asset['phone'],
+              decoration: InputDecoration(labelText: "Phone Number"),
+              validator: (value){
+                if(value == null || value.isEmpty){
+                  return "Please enter phone number";
                 }
                 return null;
               },
@@ -89,7 +113,7 @@ class EditAssetScreen extends StatelessWidget{
                   updateProduct().then((value) {
                     Navigator.pop(
                         context, MaterialPageRoute(
-                      builder: (context)=>AssetsScreen()));
+                        builder: (context)=>MaintenanceScreen()));
                   });
                 }
               },
