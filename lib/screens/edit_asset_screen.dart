@@ -17,7 +17,7 @@ class EditAssetScreen extends StatelessWidget{
 
   Future updateProduct() async{
     final response =
-    await http.put(Uri.parse("http://192.168.0.8:8000/api/products/" + asset['id'].toString()),
+    await http.put(Uri.parse("http://192.168.0.5:8000/api/products/" + asset['id'].toString()),
         body: {
           "name" : _nameController.text,
           "description" : _descriptionController.text,

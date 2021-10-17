@@ -20,7 +20,7 @@ class AddLendingScreen extends StatelessWidget{
 
   Future saveProduct() async{
     final response =
-    await http.post(Uri.parse("http://192.168.0.8:8000/api/lending"),
+    await http.post(Uri.parse("http://192.168.0.5:8000/api/lending"),
         body: {
           "name" : _nameController.text,
           "asset" : _assetController.text,

@@ -13,6 +13,7 @@ class _QRViewExampleState extends State<QRViewExample> {
   var list = [];
   Barcode result;
   QRViewController controller;
+  DateTime lastScan;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   List<String> bitems = [];
   final TextEditingController eCtrl = new TextEditingController();
@@ -169,10 +170,20 @@ class _QRViewExampleState extends State<QRViewExample> {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        result = scanData;
-        list.add(result);
-      });
+      final currentScan = DateTime.now();
+      if (lastScan == null || currentScan.difference(lastScan) > const Duration(seconds: 1)) {
+        setState(() {
+          lastScan = currentScan;
+          result = scanData;
+          list.add(result);
+          // controller.pauseCamera();
+        });
+      }
+      // setState(() {
+      //   result = scanData;
+      //   list.add(result);
+      //   // controller.pauseCamera();
+      // });
     });
   }
 

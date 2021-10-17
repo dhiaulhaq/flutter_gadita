@@ -18,7 +18,7 @@ class AddMaintenanceScreen extends StatelessWidget{
 
   Future saveProduct() async{
     final response =
-    await http.post(Uri.parse("http://192.168.0.8:8000/api/maintenance"),
+    await http.post(Uri.parse("http://192.168.0.5:8000/api/maintenance"),
         body: {
           "name" : _nameController.text,
           "description" : _descriptionController.text,

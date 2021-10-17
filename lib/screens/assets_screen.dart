@@ -14,7 +14,7 @@ class AssetsScreen extends StatefulWidget{
 }
 
 class _AssetsScreenState extends State<AssetsScreen> {
-  String url = 'http://192.168.0.8:8000/api/products';
+  String url = 'http://192.168.0.5:8000/api/products';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -23,7 +23,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.8:8000/api/products/" + assetId;
+    String url = "http://192.168.0.5:8000/api/products/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }

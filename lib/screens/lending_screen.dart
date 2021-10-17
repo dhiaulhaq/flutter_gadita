@@ -14,7 +14,7 @@ class LendingScreen extends StatefulWidget{
 }
 
 class _LendingScreenState extends State<LendingScreen> {
-  String url = 'http://192.168.0.8:8000/api/lending';
+  String url = 'http://192.168.0.5:8000/api/lending';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -23,7 +23,7 @@ class _LendingScreenState extends State<LendingScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.8:8000/api/products/" + assetId;
+    String url = "http://192.168.0.5:8000/api/products/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }

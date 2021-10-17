@@ -21,7 +21,7 @@ class EditLendingScreen extends StatelessWidget{
 
   Future updateProduct() async{
     final response =
-    await http.put(Uri.parse("http://192.168.0.8:8000/api/lending/" + asset['id'].toString()),
+    await http.put(Uri.parse("http://192.168.0.5:8000/api/lending/" + asset['id'].toString()),
         body: {
           "name" : _nameController.text,
           "asset" : _assetController.text,
