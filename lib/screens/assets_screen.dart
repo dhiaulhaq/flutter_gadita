@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gadita/main.dart';
 import 'package:gadita/screens/add_asset_screen.dart';
 import 'package:gadita/screens/assets_detail_screen.dart';
+import 'package:gadita/screens/category_screen.dart';
 import 'package:gadita/screens/edit_asset_screen.dart';
 import 'package:gadita/screens/home.dart';
 import 'package:http/http.dart' as http;
@@ -14,7 +15,7 @@ class AssetsScreen extends StatefulWidget{
 }
 
 class _AssetsScreenState extends State<AssetsScreen> {
-  String url = 'http://192.168.0.5:8000/api/products';
+  String url = 'http://192.168.0.2:8000/api/products';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -23,7 +24,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.5:8000/api/products/" + assetId;
+    String url = "http://192.168.0.2:8000/api/products/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -54,6 +55,23 @@ class _AssetsScreenState extends State<AssetsScreen> {
             builder: (context)=>HomeScreen(),
           )),
         ),
+        actions: <Widget>[
+          Padding(
+              padding: EdgeInsets.only(right: 20.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(
+                    builder: (context)=>CategoryScreen(),
+                  ));
+                },
+                child: Icon(
+                  Icons.category,
+                  size: 26.0,
+                ),
+              )
+          ),
+        ],
       ),
       body: FutureBuilder(
         future: getProducts(),

@@ -15,7 +15,7 @@ class AssetsDetailScreen extends StatefulWidget{
 }
 
 class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
-  String url = 'http://192.168.0.5:8000/api/products';
+  String url = 'http://192.168.0.2:8000/api/products';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -24,7 +24,7 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.5:8000/api/products/" + assetId;
+    String url = "http://192.168.0.2:8000/api/products/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -151,7 +151,7 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "ID: " + widget.asset['id'].toString(),
+                  "Asset Code: " + widget.asset['id'].toString(),
                   style: TextStyle(fontSize: 15),
                 ),
                 Text(

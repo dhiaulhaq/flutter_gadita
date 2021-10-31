@@ -1,12 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gadita/screens/assets_screen.dart';
+import 'package:dropdownfield/dropdownfield.dart';
 import 'package:http/http.dart' as http;
 
-class AddAssetScreen extends StatelessWidget{
+class AddAssetScreen extends StatefulWidget {
 
-  final Text text;
-  AddAssetScreen({this.text});
+  @override
+  _AddAssetState createState() => _AddAssetState();
+
+}
+
+class _AddAssetState extends State<AddAssetScreen> {
+
+  // final Text text;
+  // AddAssetScreen({this.text});
   int count = 0;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
@@ -16,7 +24,7 @@ class AddAssetScreen extends StatelessWidget{
 
   Future saveProduct() async{
     final response =
-      await http.post(Uri.parse("http://192.168.0.5:8000/api/products"),
+      await http.post(Uri.parse("http://192.168.0.2:8000/api/products"),
         body: {
           "name" : _nameController.text,
           "description" : _descriptionController.text,
@@ -26,6 +34,39 @@ class AddAssetScreen extends StatelessWidget{
       );
 
     return json.decode(response.body);
+  }
+
+  String category_id;
+  List<String> category =[
+    "Meja",
+    "Bangku",
+    "LCD",
+    "Proyektor",
+    "Papan Tulis"
+  ];
+
+  String _mySelection;
+  final String category_url = "http://192.168.0.2:8000/api/category";
+  List category_data = List();
+
+  Future<String> getCategoryData() async {
+    var res = await http
+        .get(Uri.encodeFull(category_url), headers: {"Accept": "application/json"});
+    var resBody = json.decode(res.body);
+
+    setState(() {
+      category_data = resBody;
+    });
+
+    print(resBody);
+
+    return "Sucess";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getCategoryData();
   }
 
   @override
@@ -59,6 +100,32 @@ class AddAssetScreen extends StatelessWidget{
                 return null;
               },
             ),
+            // DropDownField(
+            //     onValueChanged: (dynamic value){
+            //       category_id = value;
+            //     },
+            //   value: category_id,
+            //   required: false,
+            //   hintText: 'Choose a category',
+            //   labelText: 'Category',
+            //   items: category,
+            // ),
+
+              DropdownButton(
+                items: category_data.map((item) {
+                  return new DropdownMenuItem(
+                    child: new Text(item['name']),
+                    value: item['id'].toString(),
+                  );
+                }).toList(),
+                onChanged: (newVal) {
+                  setState(() {
+                    _mySelection = newVal;
+                  });
+                },
+                value: _mySelection,
+              ),
+
             TextFormField(
               controller: _descriptionController,
               decoration: InputDecoration(labelText: "Description"),

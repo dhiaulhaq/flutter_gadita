@@ -1,27 +1,23 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gadita/screens/supplier_screen.dart';
+import 'package:gadita/screens/category_screen.dart';
 import 'package:http/http.dart' as http;
 
-class AddSupplierScreen extends StatelessWidget{
+class AddCategoryScreen extends StatelessWidget{
 
   final Text text;
-  AddSupplierScreen({this.text});
+  AddCategoryScreen({this.text});
   int count = 0;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _addressController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _codeController = TextEditingController();
 
   Future saveProduct() async{
     final response =
-    await http.post(Uri.parse("http://192.168.0.7:8000/api/supplier"),
+    await http.post(Uri.parse("http://192.168.0.2:8000/api/category"),
         body: {
           "name" : _nameController.text,
-          "description" : _descriptionController.text,
-          "address" : _addressController.text,
-          "phone" : _phoneController.text,
+          "code" : _codeController.text,
         }
     );
 
@@ -33,7 +29,7 @@ class AddSupplierScreen extends StatelessWidget{
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Add Supplier'),
+        title: Text('Add Category'),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -41,7 +37,7 @@ class AddSupplierScreen extends StatelessWidget{
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(
-            builder: (context)=>SupplierScreen(),
+            builder: (context)=>CategoryScreen(),
           )),
         ),
       ),
@@ -54,37 +50,17 @@ class AddSupplierScreen extends StatelessWidget{
               decoration: InputDecoration(labelText: "Name"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter supplier name";
+                  return "Please enter category name";
                 }
                 return null;
               },
             ),
             TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: "Description"),
+              controller: _codeController,
+              decoration: InputDecoration(labelText: "Code"),
               validator: (value){
                 if(value == null || value.isEmpty){
-                  return "Please enter supplier description";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _addressController,
-              decoration: InputDecoration(labelText: "Address"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter supplier address";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _phoneController,
-              decoration: InputDecoration(labelText: "Phone Number"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter supplier phone number";
+                  return "Please enter category code";
                 }
                 return null;
               },
@@ -102,7 +78,7 @@ class AddSupplierScreen extends StatelessWidget{
                         .add(History(data: _nameController.text, dateTime: DateTime.now()));
                     Navigator.push(
                         context, MaterialPageRoute(
-                      builder: (context)=>SupplierScreen(),
+                      builder: (context)=>CategoryScreen(),
                     ));
                   });
                 }
