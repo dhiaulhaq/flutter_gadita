@@ -24,7 +24,7 @@ class _AssetsDetailScreenState extends State<AssetsDetailScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.2:8000/api/products/" + assetId;
+    String url = "http://192.168.0.7:8000/api/products/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }

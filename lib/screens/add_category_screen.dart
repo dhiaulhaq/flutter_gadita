@@ -14,7 +14,7 @@ class AddCategoryScreen extends StatelessWidget{
 
   Future saveProduct() async{
     final response =
-    await http.post(Uri.parse("http://192.168.0.2:8000/api/category"),
+    await http.post(Uri.parse("http://192.168.0.7:8000/api/category"),
         body: {
           "name" : _nameController.text,
           "code" : _codeController.text,

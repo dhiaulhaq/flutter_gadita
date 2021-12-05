@@ -17,7 +17,7 @@ class CategoryScreen extends StatefulWidget{
 }
 
 class _SupplierScreenState extends State<CategoryScreen> {
-  String url = 'http://192.168.0.2:8000/api/category';
+  String url = 'http://192.168.0.7:8000/api/category';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -26,7 +26,7 @@ class _SupplierScreenState extends State<CategoryScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.2:8000/api/category/" + assetId;
+    String url = "http://192.168.0.7:8000/api/category/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
