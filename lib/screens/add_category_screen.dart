@@ -7,14 +7,61 @@ class AddCategoryScreen extends StatelessWidget{
 
   final Text text;
   AddCategoryScreen({this.text});
-  int count = 0;
+
+  String title;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _codeController = TextEditingController();
 
+  Widget buildNameField() {
+    return TextFormField(
+      controller: _nameController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Name of Category',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Category is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildCodeField() {
+    return TextFormField(
+      controller: _codeController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Code of Category',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Code of Category is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
   Future saveProduct() async{
     final response =
-    await http.post(Uri.parse("http://192.168.0.7:8000/api/category"),
+    await http.post(Uri.parse("http://192.168.0.6:8000/api/category"),
         body: {
           "name" : _nameController.text,
           "code" : _codeController.text,
@@ -27,9 +74,11 @@ class AddCategoryScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Add Category'),
+        title: Text('Add Category', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -41,63 +90,54 @@ class AddCategoryScreen extends StatelessWidget{
           )),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: "Name"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter category name";
-                }
-                return null;
-              },
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'Add Category Form',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildNameField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildCodeField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  color: Colors.black54,
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  onPressed: () {
+                    if (!_formKey.currentState.validate()) {
+                      return;
+                    }
+                    saveProduct().then((value) {
+                      Navigator.push(
+                          context, MaterialPageRoute(
+                        builder: (context)=>CategoryScreen(),
+                      ));
+                    });
+                  },
+                ),
+              ],
             ),
-            TextFormField(
-              controller: _codeController,
-              decoration: InputDecoration(labelText: "Code"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter category code";
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: (){
-                if(_formKey.currentState.validate()){
-                  saveProduct().then((value) {
-                    count++;
-                    print(count);
-                    historyList
-                        .add(History(data: _nameController.text, dateTime: DateTime.now()));
-                    Navigator.push(
-                        context, MaterialPageRoute(
-                      builder: (context)=>CategoryScreen(),
-                    ));
-                  });
-                }
-              },
-              child: Text("Save"),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
-}
-
-int count = 0;
-List<History> historyList = [];
-
-class History{
-  String data;
-  DateTime dateTime;
-
-  History({this.data, this.dateTime});
 }

@@ -14,7 +14,7 @@ class MaintenanceScreen extends StatefulWidget{
 }
 
 class _MaintenanceScreenState extends State<MaintenanceScreen> {
-  String url = 'http://192.168.0.5:8000/api/maintenance';
+  String url = 'http://192.168.0.6:8000/api/maintenance';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -23,7 +23,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.5:8000/api/maintenance/" + assetId;
+    String url = "http://192.168.0.6:8000/api/maintenance/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -43,7 +43,7 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Maintenance'),
+        title: Text('Maintenance', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -82,10 +82,12 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.all(10.0),
-                                child: Column(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           snapshot.data['data'][index]['name'],
@@ -94,22 +96,16 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        Row(
-                                          children: [
-                                            GestureDetector(
-                                              onTap: (){
-                                                Navigator.push(
-                                                    context, MaterialPageRoute(
-                                                    builder: (context)=>EditMaintenanceScreen(asset: snapshot.data['data'][index],)
-                                                ));
-                                              },
-                                              child: Icon(Icons.edit),
-                                            ),
-                                          ],
+                                        Text(
+                                          snapshot.data['data'][index]['date'],
                                         ),
                                       ],
                                     ),
-                                    Text(snapshot.data['data'][index]['description']),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.chevron_right),
+                                      ],
+                                    ),
                                   ],
                                 ),
                               ),
@@ -122,7 +118,16 @@ class _MaintenanceScreenState extends State<MaintenanceScreen> {
                 }
             );
           }else{
-            return Text('Loading...');
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(height: 20),
+                  Text('Loading...')
+                ],
+              ),
+            );
           }
         },
       ),

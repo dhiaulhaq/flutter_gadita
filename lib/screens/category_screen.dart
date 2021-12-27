@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gadita/screens/add_category_screen.dart';
 import 'package:gadita/screens/add_supplier.dart';
+import 'package:gadita/screens/assets_screen.dart';
 import 'package:gadita/screens/home.dart';
 import 'package:gadita/screens/edit_category_screen.dart';
 import 'package:gadita/screens/supplier_detail_screen.dart';
@@ -17,7 +18,7 @@ class CategoryScreen extends StatefulWidget{
 }
 
 class _SupplierScreenState extends State<CategoryScreen> {
-  String url = 'http://192.168.0.7:8000/api/category';
+  String url = 'http://192.168.0.6:8000/api/category';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -25,8 +26,8 @@ class _SupplierScreenState extends State<CategoryScreen> {
     return json.decode(response.body);
   }
 
-  Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.7:8000/api/category/" + assetId;
+  Future deleteAssets() async {
+    String url = "http://192.168.0.6:8000/api/category/" + widget.asset['id'].toString();
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -48,7 +49,7 @@ class _SupplierScreenState extends State<CategoryScreen> {
             TextButton(
               child: const Text('Delete'),
               onPressed: () {
-                deleteAssets(widget.asset['id'].toString()).then((value) {
+                deleteAssets().then((value) {
                   setState(() {});
                 });
                 Navigator.push(
@@ -78,7 +79,7 @@ class _SupplierScreenState extends State<CategoryScreen> {
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Category'),
+        title: Text('Category', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -86,7 +87,7 @@ class _SupplierScreenState extends State<CategoryScreen> {
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(
-            builder: (context)=>HomeScreen(),
+            builder: (context)=>AssetsScreen(),
           )),
         ),
       ),
@@ -123,13 +124,13 @@ class _SupplierScreenState extends State<CategoryScreen> {
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      GestureDetector(
-                                        onTap: () => _showMyDialog(),
-                                        child: Icon(
-                                          Icons.delete,
-                                          size: 26.0,
-                                        ),
-                                      ),
+                                      // GestureDetector(
+                                      //   onTap: () => _showMyDialog(),
+                                      //   child: Icon(
+                                      //     Icons.delete,
+                                      //     size: 26.0,
+                                      //   ),
+                                      // ),
                                       GestureDetector(
                                         onTap: (){
                                           Navigator.push(
@@ -152,7 +153,16 @@ class _SupplierScreenState extends State<CategoryScreen> {
                 }
             );
           }else{
-            return Text('Loading...');
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(height: 20),
+                  Text('Loading...')
+                ],
+              ),
+            );
           }
         },
       ),

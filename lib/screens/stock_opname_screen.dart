@@ -1,22 +1,32 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gadita/main.dart';
+import 'package:gadita/model/period.dart';
 import 'package:gadita/screens/add_asset_screen.dart';
 import 'package:gadita/screens/assets_detail_screen.dart';
 import 'package:gadita/screens/category_screen.dart';
+import 'package:gadita/screens/compare_screen.dart';
 import 'package:gadita/screens/edit_asset_screen.dart';
 import 'package:gadita/screens/home.dart';
-import 'package:gadita/screens/test_purpose_only.dart';
+import 'package:gadita/screens/stock_opname_detail_screen.dart';
+import 'package:gadita/screens/stock_opname_scan_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
-class AssetsScreen extends StatefulWidget{
+class StockOpnameScreen extends StatefulWidget{
 
   @override
-  _AssetsScreenState createState() => _AssetsScreenState();
+  _StockOpnameScreenState createState() => _StockOpnameScreenState();
 }
 
-class _AssetsScreenState extends State<AssetsScreen> {
-  String url = 'http://192.168.0.6:8000/api/products';
+class _StockOpnameScreenState extends State<StockOpnameScreen> {
+  var logger = Logger();
+  final formatPeriod = new DateFormat('dd-MM-yyyy');
+  final formatDay = new DateFormat('E');
+  final formatMonth = new DateFormat('MMM');
+  final formatYear = new DateFormat('yyyy');
+  String url = 'http://192.168.0.6:8000/api/stock_opname';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -24,9 +34,19 @@ class _AssetsScreenState extends State<AssetsScreen> {
     return json.decode(response.body);
   }
 
-  Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.6:8000/api/products/" + assetId;
-    var response = await http.delete(Uri.parse(url));
+  Future savePeriod() async{
+    final response =
+    await http.post(Uri.parse("http://192.168.0.6:8000/api/stock_opname/create"),
+      body: {
+        "period" : formatPeriod.format(new DateTime.now()),
+        "year" : formatYear.format(new DateTime.now()),
+        "month" : formatMonth.format(new DateTime.now()),
+        "day" : formatDay.format(new DateTime.now()),
+      },
+    );
+
+    logger.d('${response.body}');
+
     return json.decode(response.body);
   }
 
@@ -36,16 +56,48 @@ class _AssetsScreenState extends State<AssetsScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.black54,
         child: Icon(Icons.add),
-        onPressed: (){
-          Navigator.push(
-              context, MaterialPageRoute(
-              builder: (context)=>AddAssetScreen(),
-          ));
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Start new period?'),
+                content: Text(
+                  'Period Date: '+formatDay.format(new DateTime.now())+', '+formatPeriod.format(new DateTime.now()),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('No', style: TextStyle(color: Colors.grey)),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text('Yes'),
+                    onPressed: (){
+                      savePeriod();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context){
+                          return StockOpnameScreen();
+                        }),
+                      );
+                      // Navigator.of(context).pushAndRemoveUntil(
+                      //     MaterialPageRoute(
+                      //         builder: (context)=>StockOpnameScan(idPeriod: period,)
+                      //     ), (route) => false
+                      // );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
         },
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Assets', style: TextStyle(color: Colors.black)),
+        title: Text('Stock Opname', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -63,11 +115,11 @@ class _AssetsScreenState extends State<AssetsScreen> {
                 onTap: () {
                   Navigator.push(
                       context, MaterialPageRoute(
-                    builder: (context)=>CategoryScreen(),
+                    builder: (context)=>CompareScreen(),
                   ));
                 },
                 child: Icon(
-                  Icons.category,
+                  Icons.bar_chart,
                   size: 26.0,
                 ),
               )
@@ -79,7 +131,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
         builder: (context, snapshot){
           if(snapshot.hasData){
             return ListView.builder(
-              itemCount: snapshot.data['data'].length,
+                itemCount: snapshot.data['data'].length,
                 itemBuilder: (context, index){
                   return Container(
                     height: 100,
@@ -88,7 +140,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
                       onTap: (){
                         Navigator.push(
                             context, MaterialPageRoute(
-                            builder: (context)=>AssetsDetailScreen(asset: snapshot.data['data'][index],)
+                            builder: (context)=>StockOpnameDetail(period: snapshot.data['data'][index],)
                         ));
                       },
                       child: Card(
@@ -96,20 +148,8 @@ class _AssetsScreenState extends State<AssetsScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                              padding: EdgeInsets.all(5),
-                              height: 100,
-                              width: 100,
-                              child: Image.network(
-                                snapshot.data['data'][index]['image_url'],
-                                fit: BoxFit.cover,
-                              ),
-                            ),
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.all(10.0),
@@ -117,7 +157,7 @@ class _AssetsScreenState extends State<AssetsScreen> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      snapshot.data['data'][index]['name'],
+                                      'Period: '+snapshot.data['data'][index]['day']+', '+snapshot.data['data'][index]['period'],
                                       style: TextStyle(
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold,
@@ -125,7 +165,15 @@ class _AssetsScreenState extends State<AssetsScreen> {
                                     ),
                                     Row(
                                       children: [
-                                        Icon(Icons.chevron_right),
+                                        GestureDetector(
+                                          onTap: (){
+                                            // Navigator.push(
+                                            //     context, MaterialPageRoute(
+                                            //     builder: (context)=>EditAssetScreen(asset: snapshot.data['data'][index],)
+                                            // ));
+                                          },
+                                          child: Icon(Icons.keyboard_arrow_right),
+                                        ),
                                       ],
                                     ),
                                   ],

@@ -14,7 +14,7 @@ class LendingScreen extends StatefulWidget{
 }
 
 class _LendingScreenState extends State<LendingScreen> {
-  String url = 'http://192.168.0.5:8000/api/lending';
+  String url = 'http://192.168.0.6:8000/api/lending';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -23,7 +23,7 @@ class _LendingScreenState extends State<LendingScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.5:8000/api/products/" + assetId;
+    String url = "http://192.168.0.6:8000/api/products/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -31,19 +31,19 @@ class _LendingScreenState extends State<LendingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black54,
-        child: Icon(Icons.add),
-        onPressed: (){
-          Navigator.push(
-              context, MaterialPageRoute(
-            builder: (context)=>AddLendingScreen(),
-          ));
-        },
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   backgroundColor: Colors.black54,
+      //   child: Icon(Icons.add),
+      //   onPressed: (){
+      //     Navigator.push(
+      //         context, MaterialPageRoute(
+      //       builder: (context)=>AddLendingScreen(),
+      //     ));
+      //   },
+      // ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Lending'),
+        title: Text('Lending', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -63,7 +63,7 @@ class _LendingScreenState extends State<LendingScreen> {
                 itemCount: snapshot.data['data'].length,
                 itemBuilder: (context, index){
                   return Container(
-                    height: 100,
+                    height: 115,
                     width: MediaQuery.of(context).size.width,
                     child: GestureDetector(
                       onTap: (){
@@ -79,30 +79,58 @@ class _LendingScreenState extends State<LendingScreen> {
                         ),
                         child: Row(
                           children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                              padding: EdgeInsets.all(5),
+                              height: 100,
+                              width: 100,
+                              child: Image.network(
+                                snapshot.data['data'][index]['image'],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                             Expanded(
                               child: Padding(
                                 padding: EdgeInsets.all(10.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      snapshot.data['data'][index]['name'],
-                                      style: TextStyle(
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.bold,
+                                    Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        snapshot.data['data'][index]['product_code'],
+                                        style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                    ),
+                                      Text(
+                                        'Borrower: '+snapshot.data['data'][index]['borrower'],
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                        ),
+                                      ),
+                                      Text(
+                                        'Date: '+snapshot.data['data'][index]['date'],
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                        ),
+                                      ),
+                                      Text(
+                                        'End Time: '+snapshot.data['data'][index]['time_end'],
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                     Row(
                                       children: [
-                                        GestureDetector(
-                                          onTap: (){
-                                            Navigator.push(
-                                                context, MaterialPageRoute(
-                                                builder: (context)=>EditLendingScreen(asset: snapshot.data['data'][index],)
-                                            ));
-                                          },
-                                          child: Icon(Icons.edit),
-                                        ),
+                                        Icon(Icons.chevron_right),
                                       ],
                                     ),
                                   ],
@@ -117,7 +145,16 @@ class _LendingScreenState extends State<LendingScreen> {
                 }
             );
           }else{
-            return Text('Loading...');
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(height: 20),
+                  Text('Loading...')
+                ],
+              ),
+            );
           }
         },
       ),

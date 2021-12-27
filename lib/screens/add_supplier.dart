@@ -7,16 +7,110 @@ class AddSupplierScreen extends StatelessWidget{
 
   final Text text;
   AddSupplierScreen({this.text});
-  int count = 0;
+
+  String title;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
 
+  Widget buildNameField() {
+    return TextFormField(
+      controller: _nameController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Name of Supplier',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Supplier is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildDescriptionField() {
+    return TextFormField(
+      controller: _descriptionController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Description',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Description is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildAddressField() {
+    return TextFormField(
+      controller: _addressController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Address',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Address is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildPhoneField() {
+    return TextFormField(
+      keyboardType: TextInputType.phone,
+      controller: _phoneController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Phone Number',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Phone Number is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
   Future saveProduct() async{
     final response =
-    await http.post(Uri.parse("http://192.168.0.7:8000/api/supplier"),
+    await http.post(Uri.parse("http://192.168.0.6:8000/api/supplier"),
         body: {
           "name" : _nameController.text,
           "description" : _descriptionController.text,
@@ -31,9 +125,11 @@ class AddSupplierScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Add Supplier'),
+        title: Text('Add Supplier', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -45,83 +141,62 @@ class AddSupplierScreen extends StatelessWidget{
           )),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: "Name"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter supplier name";
-                }
-                return null;
-              },
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'Add Supplier Form',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildNameField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildDescriptionField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildAddressField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildPhoneField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  color: Colors.black54,
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  onPressed: () {
+                    if (!_formKey.currentState.validate()) {
+                      return;
+                    }
+                    saveProduct().then((value) {
+                      Navigator.push(
+                          context, MaterialPageRoute(
+                        builder: (context)=>SupplierScreen(),
+                      ));
+                    });
+                  },
+                ),
+              ],
             ),
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: "Description"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter supplier description";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _addressController,
-              decoration: InputDecoration(labelText: "Address"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter supplier address";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _phoneController,
-              decoration: InputDecoration(labelText: "Phone Number"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter supplier phone number";
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: (){
-                if(_formKey.currentState.validate()){
-                  saveProduct().then((value) {
-                    count++;
-                    print(count);
-                    historyList
-                        .add(History(data: _nameController.text, dateTime: DateTime.now()));
-                    Navigator.push(
-                        context, MaterialPageRoute(
-                      builder: (context)=>SupplierScreen(),
-                    ));
-                  });
-                }
-              },
-              child: Text("Save"),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
-}
-
-int count = 0;
-List<History> historyList = [];
-
-class History{
-  String data;
-  DateTime dateTime;
-
-  History({this.data, this.dateTime});
 }

@@ -7,7 +7,6 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'barcode_screen.dart';
 
 class BarcodeCreate extends StatefulWidget {
   @override
@@ -45,7 +44,7 @@ class _BarcodeCreate extends State<BarcodeCreate> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text("Create Barcode"),
+      title: Text("Create Barcode", style: TextStyle(color: Colors.black)),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.file_download),

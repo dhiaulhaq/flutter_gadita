@@ -3,20 +3,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gadita/controller/api.dart';
 import 'package:gadita/screens/login.dart';
+import 'package:gadita/screens/stock_opname_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:gadita/constants.dart';
 import 'package:gadita/screens/activities_screen.dart';
 import 'package:gadita/screens/assets_screen.dart';
-import 'package:gadita/screens/barcode_screen.dart';
-import 'package:gadita/screens/details_screen.dart';
 import 'package:gadita/screens/lending_screen.dart';
 import 'package:gadita/screens/maintenance_screen.dart';
 import 'package:gadita/screens/management_screen.dart';
-import 'package:gadita/screens/qr_code_screen.dart';
+import 'package:gadita/screens/stock_opname_scan_screen.dart';
 import 'package:gadita/screens/supplier_screen.dart';
 import 'package:gadita/widgets/bottom_nav_bar.dart';
-import 'package:gadita/widgets/category_card.dart';
 import 'package:gadita/widgets/search_bar.dart';
 
 // void main() {
@@ -73,6 +71,8 @@ class _HomeState extends State<HomeScreen>{
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size; //Give total height & width of device
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       // bottomNavigationBar: BottomNavBar(),
       body: Stack(
         children: <Widget>[
@@ -332,7 +332,7 @@ class _HomeState extends State<HomeScreen>{
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context){
-                                return AssetsScreen();
+                                return MaintenanceScreen();
                               }),
                             );
                           },
@@ -382,7 +382,7 @@ class _HomeState extends State<HomeScreen>{
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context){
-                                return QRViewExample();
+                                return StockOpnameScreen();
                               }),
                             );
                           },
@@ -401,7 +401,7 @@ class _HomeState extends State<HomeScreen>{
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: (context){
-                                        return QRViewExample();
+                                        return StockOpnameScreen();
                                       }),
                                     );
                                   },

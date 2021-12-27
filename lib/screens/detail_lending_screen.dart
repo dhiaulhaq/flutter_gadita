@@ -16,7 +16,185 @@ class LendingDetailScreen extends StatefulWidget{
 }
 
 class _LendingDetailScreenState extends State<LendingDetailScreen> {
-  String url = 'http://192.168.0.5:8000/api/lending';
+
+  String title;
+  TextEditingController _borrowerController = TextEditingController();
+  TextEditingController _qtyController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _startController = TextEditingController();
+  TextEditingController _endController = TextEditingController();
+  TextEditingController _statusController = TextEditingController();
+
+  Widget buildBorrowerField() {
+    return TextFormField(
+      enabled: false,
+      controller: _borrowerController..text = widget.asset['borrower'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Borrower',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildQtyField() {
+    return TextFormField(
+      enabled: false,
+      controller: _qtyController..text = widget.asset['qty'].toString(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Qty',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildDescriptionField() {
+    return TextFormField(
+      enabled: false,
+      controller: _descriptionController..text = widget.asset['description'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Reason',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildDateField() {
+    return TextFormField(
+      enabled: false,
+      controller: _dateController..text = widget.asset['date'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Date Borrowed',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildStartField() {
+    return TextFormField(
+      enabled: false,
+      controller: _startController..text = widget.asset['time_start'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Start At',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildEndField() {
+    return TextFormField(
+      enabled: false,
+      controller: _endController..text = widget.asset['time_end'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'End At',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildStatusField() {
+    return TextFormField(
+      enabled: false,
+      controller: _statusController..text = widget.asset['status'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Status',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  String url = 'http://192.168.0.6:8000/api/lending';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -25,8 +203,14 @@ class _LendingDetailScreenState extends State<LendingDetailScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.5:8000/api/lending/" + assetId;
+    String url = "http://192.168.0.6:8000/api/lending/" + assetId;
     var response = await http.delete(Uri.parse(url));
+    return json.decode(response.body);
+  }
+
+  Future updateLending(String assetId) async {
+    String url = "http://192.168.0.6:8000/api/lending/" + assetId;
+    var response = await http.put(Uri.parse(url));
     return json.decode(response.body);
   }
 
@@ -65,19 +249,9 @@ class _LendingDetailScreenState extends State<LendingDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black54,
-        child: Icon(Icons.edit),
-        onPressed: (){
-          Navigator.push(
-              context, MaterialPageRoute(
-            builder: (context)=>EditAssetScreen(),
-          ));
-        },
-      ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Lending Detail'),
+        title: Text('Lending Detail', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
@@ -94,118 +268,95 @@ class _LendingDetailScreenState extends State<LendingDetailScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 20,
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              FittedBox(
+                child: Image.network(
+                  widget.asset['image'],
+                ),
+                fit: BoxFit.fill,
+
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.asset['product_code'],
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    buildBorrowerField(),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    buildQtyField(),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    buildDescriptionField(),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    buildDateField(),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    buildStartField(),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    buildEndField(),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    buildStatusField(),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    RaisedButton(
+                      color: Colors.black54,
+                      child: Text(
+                        'Finish',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      onPressed: () {
+                        updateLending(widget.asset['id'].toString()).then((value) {
+                          setState(() {});
+                        });
+                        Navigator.push(
+                            context, MaterialPageRoute(
+                          builder: (context)=>LendingScreen(),
+                        ));
+                      },
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.asset['name'],
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "ID: " + widget.asset['id'].toString(),
-                  style: TextStyle(fontSize: 15),
-                ),
-                Text(
-                  "Asset: " + widget.asset['asset'],
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  "Description: " + widget.asset['description'],
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  "Date: " + widget.asset['date'],
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  "Start at: " + widget.asset['time_start'],
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  "End at: " + widget.asset['time_end'],
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  "Phone Number: " + widget.asset['phone'],
-                  style: TextStyle(fontSize: 18),
-                ),
-                Text(
-                  "Status: " + widget.asset['status'],
-                  style: TextStyle(fontSize: 18),
-                ),
-              ],
-            ),
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: [
-          //       Text(
-          //         "ID: " + widget.asset['id'].toString(),
-          //         style: TextStyle(fontSize: 15),
-          //       ),
-          //       Text(
-          //         "Asset: " + widget.asset['asset'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //       Text(
-          //         "Description: " + widget.asset['description'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //       Text(
-          //         "Date: " + widget.asset['date'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //       Text(
-          //         "Start at: " + widget.asset['time_start'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //       Text(
-          //         "End at: " + widget.asset['time_end'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //       Text(
-          //         "Phone Number: " + widget.asset['phone'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //       Text(
-          //         "Status: " + widget.asset['status'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, top: 15.0, right: 15.0),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: [
-          //       Text(
-          //         "Description:",
-          //         style: TextStyle(fontSize: 15),
-          //       ),
-          //       Text(
-          //         "",
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, top: 10.0, right: 15.0),
-          //   child: Text(
-          //     widget.asset['description'],
-          //     style: TextStyle(fontSize: 15),
-          //   ),
-          // ),
-        ],
+        ),
       ),
     );
   }

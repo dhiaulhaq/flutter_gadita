@@ -32,6 +32,8 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       body: Container(
         color: Color(0xFFF5CEB8),

@@ -8,10 +8,9 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'barcode_screen.dart';
 
 class BarcodeDetailScreen extends StatefulWidget {
-  final int assetBarcode;
+  final String assetBarcode;
   BarcodeDetailScreen({Key key, @required this.assetBarcode}) : super(key: key);
 
   @override
@@ -19,7 +18,7 @@ class BarcodeDetailScreen extends StatefulWidget {
 }
 
 class _BarcodeDetailScreen extends State<BarcodeDetailScreen> {
-  int assetBarcode;
+  String assetBarcode;
   _BarcodeDetailScreen(this.assetBarcode);
   final controller = TextEditingController();
   GlobalKey globalKey = new GlobalKey();
@@ -52,15 +51,15 @@ class _BarcodeDetailScreen extends State<BarcodeDetailScreen> {
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
       backgroundColor: Color(0xFFF5CEB8),
-      title: Text("Asset Barcode"),
+      title: Text("Asset Barcode", style: TextStyle(color: Colors.black)),
       iconTheme: IconThemeData(
         color: Colors.black, //change your color here
       ),
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.file_download),
-          onPressed: _captureAndSharePng,
-        )
+        // IconButton(
+        //   icon: Icon(Icons.file_download),
+        //   onPressed: _captureAndSharePng,
+        // )
       ],
     ),
     body: Center(
@@ -80,15 +79,15 @@ class _BarcodeDetailScreen extends State<BarcodeDetailScreen> {
                 child: Column(
                   children: <Widget>[
                     BarcodeWidget(
-                      barcode: Barcode.code39(),
-                      data: assetBarcode.toString(),
+                      barcode: Barcode.qrCode(),
+                      data: assetBarcode,
                       width: 400,
                       height: 160,
                       drawText: false,
                     ),
                     SizedBox(height: 10),
                     Text(
-                      'Code ID: '+assetBarcode.toString(),
+                      assetBarcode,
                       style: TextStyle(fontSize: 20),
                     ),
                   ],

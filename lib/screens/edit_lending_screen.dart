@@ -21,7 +21,7 @@ class EditLendingScreen extends StatelessWidget{
 
   Future updateProduct() async{
     final response =
-    await http.put(Uri.parse("http://192.168.0.5:8000/api/lending/" + asset['id'].toString()),
+    await http.put(Uri.parse("http://192.168.0.6:8000/api/lending/" + asset['id'].toString()),
         body: {
           "name" : _nameController.text,
           "asset" : _assetController.text,
@@ -40,9 +40,11 @@ class EditLendingScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Edit Lending'),
+        title: Text('Edit Lending', style: TextStyle(color: Colors.black)),
       ),
       body: Form(
         key: _formKey,
@@ -135,7 +137,7 @@ class EditLendingScreen extends StatelessWidget{
               onPressed: (){
                 if(_formKey.currentState.validate()){
                   updateProduct().then((value) {
-                    Navigator.pop(
+                    Navigator.push(
                         context, MaterialPageRoute(
                         builder: (context)=>AssetsScreen()));
                   });

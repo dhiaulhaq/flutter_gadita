@@ -17,7 +17,7 @@ class SupplierScreen extends StatefulWidget{
 }
 
 class _SupplierScreenState extends State<SupplierScreen> {
-  String url = 'http://192.168.0.7:8000/api/supplier';
+  String url = 'http://192.168.0.6:8000/api/supplier';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -26,7 +26,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.7:8000/api/products/" + assetId;
+    String url = "http://192.168.0.6:8000/api/products/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -46,7 +46,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Supplier'),
+        title: Text('Supplier', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -97,15 +97,7 @@ class _SupplierScreenState extends State<SupplierScreen> {
                                     ),
                                     Row(
                                       children: [
-                                        GestureDetector(
-                                          onTap: (){
-                                            Navigator.push(
-                                                context, MaterialPageRoute(
-                                                builder: (context)=>EditSupplierScreen(asset: snapshot.data['data'][index],)
-                                            ));
-                                          },
-                                          child: Icon(Icons.edit),
-                                        ),
+                                        Icon(Icons.chevron_right),
                                       ],
                                     ),
                                   ],
@@ -120,7 +112,16 @@ class _SupplierScreenState extends State<SupplierScreen> {
                 }
             );
           }else{
-            return Text('Loading...');
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  SizedBox(height: 20),
+                  Text('Loading...')
+                ],
+              ),
+            );
           }
         },
       ),

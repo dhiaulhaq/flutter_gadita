@@ -15,7 +15,161 @@ class MaintenanceDetailScreen extends StatefulWidget{
 }
 
 class _MaintenanceDetailScreenState extends State<MaintenanceDetailScreen> {
-  String url = 'http://192.168.0.5:8000/api/maintenance';
+
+  String title;
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _locationController = TextEditingController();
+  TextEditingController _addressController = TextEditingController();
+  TextEditingController _dateController = TextEditingController();
+  TextEditingController _phoneController = TextEditingController();
+
+  Widget buildNameField() {
+    return TextFormField(
+      enabled: false,
+      controller: _nameController..text = widget.asset['name'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Name of Asset',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildDescriptionField() {
+    return TextFormField(
+      enabled: false,
+      controller: _descriptionController..text = widget.asset['description'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Description',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Description is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildLocationField() {
+    return TextFormField(
+      enabled: false,
+      controller: _locationController..text = widget.asset['location'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Location',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Location.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildAddressField() {
+    return TextFormField(
+      enabled: false,
+      controller: _addressController..text = widget.asset['address'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Address of Maintenance',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Address of Maintenance is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildDateField() {
+    return TextFormField(
+      enabled: false,
+      controller: _dateController..text = widget.asset['date'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Date',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Date is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildPhoneField() {
+    return TextFormField(
+      enabled: false,
+      keyboardType: TextInputType.phone,
+      controller: _phoneController..text = widget.asset['phone'],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Phone',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Phone is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  String url = 'http://192.168.0.6:8000/api/maintenance';
 
   Future getProducts() async {
     var response = await http.get(Uri.parse(url));
@@ -24,7 +178,7 @@ class _MaintenanceDetailScreenState extends State<MaintenanceDetailScreen> {
   }
 
   Future deleteAssets(String assetId) async {
-    String url = "http://192.168.0.5:8000/api/maintenance/" + assetId;
+    String url = "http://192.168.0.6:8000/api/maintenance/" + assetId;
     var response = await http.delete(Uri.parse(url));
     return json.decode(response.body);
   }
@@ -70,13 +224,21 @@ class _MaintenanceDetailScreenState extends State<MaintenanceDetailScreen> {
         onPressed: (){
           Navigator.push(
               context, MaterialPageRoute(
-            builder: (context)=>EditMaintenanceScreen(),
+            builder: (context)=>EditMaintenanceScreen(
+                id: widget.asset['id'],
+                name: widget.asset['name'],
+                description: widget.asset['description'],
+                location: widget.asset['location'],
+                address: widget.asset['address'],
+                dateM: widget.asset['date'],
+                phone: widget.asset['phone'],
+            ),
           ));
         },
       ),
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Asset Detail'),
+        title: Text('Maintenance Detail', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black, //change your color here
         ),
@@ -93,81 +255,47 @@ class _MaintenanceDetailScreenState extends State<MaintenanceDetailScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(20.0),
+          child: Form(
             child: Column(
-              children: [
+              children: <Widget>[
                 Text(
-                  widget.asset['name'],
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  'Maintenance',
+                  style: Theme.of(context).textTheme.headline5,
                 ),
-                Text(
-                  widget.asset['description'],
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                SizedBox(
+                  height: 20.0,
                 ),
-                Text(
-                  widget.asset['location'],
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                buildNameField(),
+                SizedBox(
+                  height: 20.0,
                 ),
-                Text(
-                  widget.asset['address'],
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                buildDescriptionField(),
+                SizedBox(
+                  height: 20.0,
                 ),
-                Text(
-                  widget.asset['date'],
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                buildLocationField(),
+                SizedBox(
+                  height: 20.0,
                 ),
-                Text(
-                  widget.asset['phone'],
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                buildAddressField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildDateField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildPhoneField(),
+                SizedBox(
+                  height: 20.0,
                 ),
               ],
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: [
-          //       Text(
-          //         "ID: " + widget.asset['id'].toString(),
-          //         style: TextStyle(fontSize: 15),
-          //       ),
-          //       Text(
-          //         "Rp. " + widget.asset['price'],
-          //         style: TextStyle(fontSize: 18),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, top: 15.0, right: 15.0),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: [
-          //       Text(
-          //         "Description:",
-          //         style: TextStyle(fontSize: 15),
-          //       ),
-          //       Text(
-          //         "",
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, top: 10.0, right: 15.0),
-          //   child: Text(
-          //     widget.asset['description'],
-          //     style: TextStyle(fontSize: 15),
-          //   ),
-          // ),
-        ],
+        ),
       ),
     );
   }

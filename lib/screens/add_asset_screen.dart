@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gadita/screens/assets_screen.dart';
 import 'package:dropdownfield/dropdownfield.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 
 class AddAssetScreen extends StatefulWidget {
 
@@ -12,69 +13,176 @@ class AddAssetScreen extends StatefulWidget {
 }
 
 class _AddAssetState extends State<AddAssetScreen> {
+  var logger = Logger();
 
-  // final Text text;
-  // AddAssetScreen({this.text});
-  int count = 0;
+  String title;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _categoryController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
-  TextEditingController _priceController = TextEditingController();
+  TextEditingController _qtyController = TextEditingController();
   TextEditingController _imageUrlController = TextEditingController();
+
+  Widget buildNameField() {
+    return TextFormField(
+      controller: _nameController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Name of Asset',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Name of Asset is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildCategoryField() {
+    return TextFormField(
+      controller: _categoryController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Category',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Category is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildDescriptionField() {
+    return TextFormField(
+      controller: _descriptionController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Description',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Description is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildQtyField() {
+    return TextFormField(
+      keyboardType: TextInputType.number,
+      controller: _qtyController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Qty',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Qty is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
+
+  Widget buildImageField() {
+    return TextFormField(
+      controller: _imageUrlController,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Image',
+        contentPadding: EdgeInsets.symmetric(
+          vertical: 0.0,
+          horizontal: 12.0,
+        ),
+      ),
+      validator: (String value) {
+        if (value.isEmpty) {
+          return 'Image is Required.';
+        }
+        return null;
+      },
+      onSaved: (String value) {
+        title = value;
+      },
+    );
+  }
 
   Future saveProduct() async{
     final response =
-      await http.post(Uri.parse("http://192.168.0.2:8000/api/products"),
+      await http.post(Uri.parse("http://192.168.0.6:8000/api/products"),
         body: {
           "name" : _nameController.text,
+          "category_id" : _categoryController.text,
           "description" : _descriptionController.text,
-          "price" : _priceController.text,
+          "qty_master" : _qtyController.text,
           "image_url" : _imageUrlController.text,
         }
       );
 
+    logger.d('${response.body}');
+
     return json.decode(response.body);
   }
 
-  String category_id;
-  List<String> category =[
-    "Meja",
-    "Bangku",
-    "LCD",
-    "Proyektor",
-    "Papan Tulis"
-  ];
-
-  String _mySelection;
-  final String category_url = "http://192.168.0.2:8000/api/category";
-  List category_data = List();
-
-  Future<String> getCategoryData() async {
-    var res = await http
-        .get(Uri.encodeFull(category_url), headers: {"Accept": "application/json"});
-    var resBody = json.decode(res.body);
-
+  String _baseUrl = "http://192.168.0.6:8000/api/category";
+  String _valCategory;
+  List<dynamic> _dataCategory = List();
+  void getCategory() async {
+    final respose = await http.get(_baseUrl + "getCategory1"); //untuk melakukan request ke webservice
+    var listData = jsonDecode(respose.body); //lalu kita decode hasil datanya
     setState(() {
-      category_data = resBody;
+      _dataCategory = listData; // dan kita set kedalam variable _dataProvince
     });
-
-    print(resBody);
-
-    return "Sucess";
+    print("data : $listData");
   }
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    this.getCategoryData();
+    getCategory(); //Ketika pertama kali membuka home screen makan method ini dijalankan untuk pertama kalinya juga
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Color(0xFFF5CEB8),
-        title: Text('Add Asset'),
+        title: Text('Add Asset', style: TextStyle(color: Colors.black)),
         iconTheme: IconThemeData(
           color: Colors.black,
         ),
@@ -86,109 +194,68 @@ class _AddAssetState extends State<AddAssetScreen> {
           )),
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: "Name"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter asset name";
-                }
-                return null;
-              },
-            ),
-            // DropDownField(
-            //     onValueChanged: (dynamic value){
-            //       category_id = value;
-            //     },
-            //   value: category_id,
-            //   required: false,
-            //   hintText: 'Choose a category',
-            //   labelText: 'Category',
-            //   items: category,
-            // ),
-
-              DropdownButton(
-                items: category_data.map((item) {
-                  return new DropdownMenuItem(
-                    child: new Text(item['name']),
-                    value: item['id'].toString(),
-                  );
-                }).toList(),
-                onChanged: (newVal) {
-                  setState(() {
-                    _mySelection = newVal;
-                  });
-                },
-                value: _mySelection,
-              ),
-
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: "Description"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter asset description";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _priceController,
-              decoration: InputDecoration(labelText: "Price"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter asset price";
-                }
-                return null;
-              },
-            ),
-            TextFormField(
-              controller: _imageUrlController,
-              decoration: InputDecoration(labelText: "Image URL"),
-              validator: (value){
-                if(value == null || value.isEmpty){
-                  return "Please enter asset image url";
-                }
-                return null;
-              },
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-                onPressed: (){
-                  if(_formKey.currentState.validate()){
+      body: SingleChildScrollView(
+        child: Container(
+          margin: EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'Add Asset Form',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildNameField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildCategoryField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildDescriptionField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildQtyField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                buildImageField(),
+                SizedBox(
+                  height: 20.0,
+                ),
+                RaisedButton(
+                  color: Colors.black54,
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  onPressed: () {
+                    if (!_formKey.currentState.validate()) {
+                      return;
+                    }
                     saveProduct().then((value) {
-                      count++;
-                      print(count);
-                      historyList
-                          .add(History(data: _nameController.text, dateTime: DateTime.now()));
-                      Navigator.pop(
-                          context, MaterialPageRoute(
-                        builder: (context)=>AssetsScreen(),
-                      ));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context){
+                          return AssetsScreen();
+                        }),
+                      );
                     });
-                  }
-                },
-                child: Text("Save"),
+                  },
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
-}
-
-int count = 0;
-List<History> historyList = [];
-
-class History{
-  String data;
-  DateTime dateTime;
-
-  History({this.data, this.dateTime});
 }
